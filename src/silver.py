@@ -66,34 +66,38 @@ def transform_order_items(df_orders_items):
 def main():
     
     spark = get_spark()
-    
     dfs = load_bronze_tables(spark, bronze_dir)
+    
     
     orders_df = dfs['orders']
     
     linhas_antes = orders_df.count()
-    
     df_orders_silver = transform_orders(orders_df)
-    
     linhas_depois = df_orders_silver.count()
     
     print(f'{linhas_antes} Linhas antes e {linhas_depois} depois (order)')
     
+    orders_out = os.path.join(silver_dir, 'orders')
+    df_orders_silver.write.mode('overwrite').parquet(f'{silver_dir}orders')
+    print(f'[orders] Salvo em: {orders_out}')
+    
+    
     order_items_df = dfs['order_items']
     
     linhas_antes_items = order_items_df.count()
-
-    df_order_items_silver = transform_order_items(order_items_df)
+    order_items_silver = transform_order_items(order_items_df)
+    linhas_depois_items = order_items_silver.count()
     
-    linhas_depois_items = df_order_items_silver.count()
     print(f'{linhas_antes_items} Linhas antes e {linhas_depois_items} depois (order_items)')
     
-    df_orders_silver.write.mode('overwrite').parquet(f'{silver_dir}orders')
-
-    df_order_items_silver.write.mode('overwrite').parquet(f'{silver_dir}order_items')
+    order_items_out = os.path.join(silver_dir, 'order_items')
+    order_items_silver.write.mode('overwrite').parquet(f'{silver_dir}order_items')
+    print(f'[order_items] Salvo em: {order_items_out}')
     
     
-
+    spark.stop()
+    
+    
 if __name__ == '__main__':
     main()
     

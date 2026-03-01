@@ -1,8 +1,5 @@
 from pyspark.sql import SparkSession
 
-bronze_dir = '/data/bronze/'
-silver_dir = '/data/silver/'
-
 
 def get_spark():
     
@@ -43,6 +40,8 @@ def main():
         
         print(f'Tabela {nome_tabela} criada com {df.count()} linhas')
         
+        
+        spark.stop()
         
     
 if __name__ == '__main__':
