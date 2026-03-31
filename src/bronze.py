@@ -1,4 +1,5 @@
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import current_timestamp
 
 
 def get_spark():
@@ -6,7 +7,6 @@ def get_spark():
     spark = SparkSession.builder\
             .master('local[*]')\
             .appName('Olist Bronze Layer')\
-            .config('spark.ui.port', '4050')\
             .getOrCreate()
     
     return spark
@@ -29,20 +29,31 @@ def main():
         path_entrada = f'data/raw/olist/{nome_arquivo}'
         path_saida = f'data/bronze/{nome_tabela}'
         
-        df = (
-            spark.read
-            .option('header', True)
-            .option('inferSchema', True)
-            .csv(path_entrada)
-        )
+        try:
+            df = (
+                spark.read
+                .option('header', True)
+                .option('inferSchema', True)
+                .option('encoding', 'UTF-8')
+                .csv(path_entrada)
+            )
+
+            df = df.withColumn("_ingestion_date", current_timestamp())
+            
+            df.write.mode('overwrite').parquet(path_saida)
+            print(f'[BRONZE] Tabela {nome_tabela} processada com sucesso. {df.count()} linhas')
+
+        except Exception as e:
+            print(f'[BRONZE] Erro ao processar arquivo {nome_arquivo}: {e}')
         
-        df.write.mode('overwrite').parquet(path_saida)
-        
-        print(f'Tabela {nome_tabela} criada com {df.count()} linhas')
-        
-        
-        spark.stop()
-        
-    
+            
+    spark.stop()
+
+
 if __name__ == '__main__':
     main()
+
+
+
+
+
