@@ -3,7 +3,6 @@ from pyspark.sql.functions import current_timestamp
 
 
 def get_spark():
-    
     spark = SparkSession.builder\
             .master('local[*]')\
             .appName('Olist Bronze Layer')\
