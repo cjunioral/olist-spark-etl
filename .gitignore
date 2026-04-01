@@ -3,4 +3,6 @@ venv/
 data/
 __pycache__/
 *.parquet
-*.zip
+*.zipairflow_home/
+*.db
+*.log
