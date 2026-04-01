@@ -70,7 +70,8 @@ export AIRFLOW_HOME=$(pwd)/airflow_home
 airflow standalone
 ```
 ## Acesse o Dashboard:
-```Abra localhost:8080 no navegador e ative a DAG olist_spark_medallion.
+```Bash
+    Abra localhost:8080 no navegador e ative a DAG olist_spark_medallion.
 ```
 # Desenvolvido por Cicero Junior 💻
 Engenheiro de Dados
